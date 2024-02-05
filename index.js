@@ -13,7 +13,6 @@ const morgan = require('morgan')
 
 app.use(morgan('dev')); // format prédifini, voir dans la doc
 
-
 app.get('/', (req, res) => {
     res.send("<p>qqchose</p>");
 });
