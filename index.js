@@ -11,7 +11,7 @@ const db = require("../apiPokemon/.src/config/db.js");
 
 const morgan = require('morgan')
 
-app.use(morgan('dev')); // format prédifini, voir dans la doc
+app.use(morgan('dev')); 
 
 app.get('/', (req, res) => {
     res.send("<p>qqchose</p>");

@@ -1,6 +1,4 @@
-// Nous avons besoin d'importer le module express pour utiliser le Router
 const express = require('express');
-// Nous créons un objet router qui va nous permettre de gérer les routes
 const router = express.Router();    
 const mysql = require('mysql');
 const db = require("../../apiPokemon/.src/config/db.js");
@@ -13,15 +11,71 @@ router.get('/tous', (req, res) => {
             console.error('Erreur lors de la récupération des pokémons :', err);
             res.status(500).json({ error: 'Erreur serveur' });
         } else {
-            // Convertir les résultats en une chaîne de caractères avec un retour à la ligne entre chaque entrée
             const formattedResult = result.map(pokemon => JSON.stringify(pokemon, null, 2)).join('<br> <br>');
 
-            // Renvoyer la chaîne formatée
             res.send(formattedResult);
         }
     });
 });
+router.delete('/:id', (req, res) => {
+    const pokemonId = req.params.id;
+    const query = `DELETE FROM pokemon WHERE id = ${pokemonId}`;
 
+    db.query(query, (err, result) => {
+        if (err) {
+            console.error(`Erreur lors de la suppression du Pokémon avec l'ID ${pokemonId} :`, err);
+            res.status(500).json({ error: 'Erreur serveur' });
+        } else {
+            if (result.affectedRows === 0) {
+                res.status(404).json({ error: `Aucun Pokémon trouvé avec l'ID ${pokemonId}` });
+            } else {
+                res.status(200).json({ message: `Pokémon avec l'ID ${pokemonId} supprimé avec succès` });
+            }
+        }
+    });
+});
+router.put('/:id', (req, res) => {
+    const pokemonId = req.params.id;
+    const { nom, type_primaire, type_secondaire, pv, attaque, defense } = req.body;
+    const query = `
+        UPDATE pokemon 
+        SET 
+            nom = ?, 
+            type_primaire = ?, 
+            type_secondaire = ?, 
+            pv = ?, 
+            attaque = ?, 
+            defense = ? 
+        WHERE id = ?`;
+    const values = [nom, type_primaire, type_secondaire, pv, attaque, defense, pokemonId];
+
+    db.query(query, values, (err, result) => {
+        if (err) {
+            console.error(`Erreur lors de la mise à jour du Pokémon avec l'ID ${pokemonId} :`, err);
+            res.status(500).json({ error: 'Erreur serveur' });
+        } else {
+            if (result.affectedRows === 0) {
+                res.status(404).json({ error: `Aucun Pokémon trouvé avec l'ID ${pokemonId}` });
+            } else {
+                res.status(200).json({ message: `Pokémon avec l'ID ${pokemonId} mis à jour avec succès` });
+            }
+        }
+    });
+});
+router.post('/ajouter', (req, res) => {
+    const { nom, type_primaire, type_secondaire } = req.body;
+    const query = `INSERT INTO pokemon (nom, type_primaire, type_secondaire) VALUES (?, ?, ?)`;
+    const values = [nom, type_primaire, type_secondaire];
+
+    db.query(query, values, (err, result) => {
+        if (err) {
+            console.error('Erreur lors de l\'ajout du Pokémon :', err);
+            res.status(500).json({ error: 'Erreur serveur' });
+        } else {
+            res.status(201).json({ message: 'Pokémon ajouté avec succès', pokemonId: result.insertId });
+        }
+    });
+});
 router.get('/:id', (req, res) => {
     const pokemonId = req.params.id;
     const query = `SELECT * FROM pokemon WHERE id = ${pokemonId}`;
@@ -34,10 +88,8 @@ router.get('/:id', (req, res) => {
             if (result.length === 0) {
                 res.status(404).json({ error: `Aucun Pokémon trouvé avec l'ID ${pokemonId}` });
             } else {
-                // Convertir le résultat en une chaîne de caractères avec une mise en forme
                 const formattedResult = JSON.stringify(result[0], null, 2);
 
-                // Renvoyer la chaîne formatée
                 res.send(formattedResult);
             }
         }
@@ -45,7 +97,7 @@ router.get('/:id', (req, res) => {
 });
 
 
-router.get('/type/:type', (req, res) => {
+router.get('/type/:type', (req, res) => {65
     const pokemonType = req.params.type;
     const query = `SELECT * FROM pokemon WHERE type_primaire = '${pokemonType}'`;
 
@@ -57,10 +109,8 @@ router.get('/type/:type', (req, res) => {
             if (result.length === 0) {
                 res.status(404).json({ error: `Aucun Pokémon trouvé de type ${pokemonType}` });
             } else {
-                // Convertir les résultats en une chaîne de caractères avec un retour à la ligne entre chaque entrée
                 const formattedResult = result.map(pokemon => JSON.stringify(pokemon, null, 2)).join('<br> <br>');
 
-                // Renvoyer la chaîne formatée
                 res.send(formattedResult);
             }
         }
