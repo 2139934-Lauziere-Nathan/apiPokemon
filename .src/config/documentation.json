@@ -1,0 +1,173 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Mon API Pokemon",
+    "description": "Documentation pour Api Pokemon",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/pokemon/tous": {
+      "get": {
+        "summary": "recup tout les pokemon",
+        "description": "Get une liste de tout les pokemon de la base de donne",
+        "responses": {
+          "200": {
+            "description": "une liste de tout les pokemon"
+          }
+        }
+      }
+    },
+    "/api/pokemon/{id}": {
+      "get": {
+        "summary": "recup un pokemon par son id",
+        "description": "recupere un pokemon par son id dans la base de donne",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "le id du pokemon a recupere",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "pokemon avec le id demander"
+          },
+          "404": {
+            "description": "si le pokemon avec le id demander est absent"
+          }
+        }
+      }
+    },
+    "/api/pokemon/type/{type}": {
+      "get": {
+        "summary": "recuper une liste de pokemon par le type",
+        "description": "recupere une liste des pokemon a partire de la base de donne",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "type",
+            "description": "le type de pokemon a retoure",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "une liste de pokemon tire par type"
+          },
+          "404": {
+            "description": "si aucun pokemon de ce type est trouver"
+          }
+        }
+      }
+    },
+    "/api/pokemon": {
+      "post": {
+        "summary": "Ajouter un nouveau okemon",
+        "description": "ajouter une nouvelle entre a la base de donne",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nom": { "type": "string" },
+                  "type_primaire": { "type": "string" },
+                  "type_secondaire": { "type": "string" },
+                  "pv": { "type": "integer" },
+                  "attaque": { "type": "integer" },
+                  "defense": { "type": "integer" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "le pokemon ajouter"
+          },
+          "500": {
+            "description": "si il y a un erreur durrant l'ajout"
+          }
+        }
+      },
+      "put": {
+        "summary": "Mise a jour d'un pokemon",
+        "description": "met a jour une entre dans la base de donne",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "le id du pokemon a ajouter",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nom": { "type": "string" },
+                  "type_primaire": { "type": "string" },
+                  "type_secondaire": { "type": "string" },
+                  "pv": { "type": "integer" },
+                  "attaque": { "type": "integer" },
+                  "defense": { "type": "integer" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "le pokemon mis a jour"
+          },
+          "404": {
+            "description": "si le pokemon avec le id est introuvable"
+          },
+          "500": {
+            "description": "si il y a eu un erreu durant la mise a jour"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Effacer pokemon",
+        "description": "efface un pokemon de la base de donne",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "le id du pokemon effacer",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "si le pokemon est supprimer avec succes"
+          },
+          "404": {
+            "description": "si le pokemon avec l'id specifier n'est pas trouver"
+          },
+          "500": {
+            "description": "si il y a eu une erreur lors de effacement"
+          }
+        }
+      }
+    }
+  }
+}
